@@ -1,0 +1,34 @@
+name: Build FIT 70 APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Extract project
+        run: unzip FIT70_Android_Project.zip
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: android-actions/setup-android@v3
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      - name: Build APK
+        run: gradle -p FIT70_Android_Project assembleDebug
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: FIT70-debug-apk
+          path: FIT70_Android_Project/app/build/outputs/apk/debug/app-debug.apk
